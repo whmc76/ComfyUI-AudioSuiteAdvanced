@@ -1,0 +1,91 @@
+{
+    "last_node_id": 3,
+    "last_link_id": 2,
+    "nodes": [
+        {
+            "id": 1,
+            "type": "TextSplitter",
+            "pos": [100, 100],
+            "inputs": [
+                {
+                    "name": "text_file",
+                    "type": "STRING",
+                    "link": null,
+                    "value": "input/example.txt"
+                },
+                {
+                    "name": "max_length",
+                    "type": "INT",
+                    "link": null,
+                    "value": 200
+                },
+                {
+                    "name": "overlap",
+                    "type": "INT",
+                    "link": null,
+                    "value": 20
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "text_chunks",
+                    "type": "LIST",
+                    "links": [1],
+                    "value": null
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "type": "TTS",
+            "pos": [400, 100],
+            "inputs": [
+                {
+                    "name": "text",
+                    "type": "STRING",
+                    "link": 1,
+                    "value": null
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "audio",
+                    "type": "STRING",
+                    "links": [2],
+                    "value": null
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "type": "AudioMerger",
+            "pos": [700, 100],
+            "inputs": [
+                {
+                    "name": "audio_segments",
+                    "type": "LIST",
+                    "link": 2,
+                    "value": null
+                },
+                {
+                    "name": "output_path",
+                    "type": "STRING",
+                    "link": null,
+                    "value": "output/merged_audio.wav"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "merged_audio_path",
+                    "type": "STRING",
+                    "links": [],
+                    "value": null
+                }
+            ]
+        }
+    ],
+    "links": [
+        [1, 1, "text_chunks", 2, "text", "STRING"],
+        [2, 2, "audio", 3, "audio_segments", "LIST"]
+    ]
+} 
