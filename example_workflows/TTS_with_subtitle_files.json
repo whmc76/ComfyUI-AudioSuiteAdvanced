@@ -1,0 +1,830 @@
+{
+  "id": "95e14a33-512a-4259-953d-34c381f53cc5",
+  "revision": 0,
+  "last_node_id": 59,
+  "last_link_id": 106,
+  "nodes": [
+    {
+      "id": 29,
+      "type": "LoadAudio",
+      "pos": [
+        1050,
+        1430
+      ],
+      "size": [
+        274.080078125,
+        136
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            26
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.34",
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "talk_male_law_10s.wav",
+        null,
+        null
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 28,
+      "type": "IndexTTSRun",
+      "pos": [
+        1390,
+        1430
+      ],
+      "size": [
+        270,
+        270
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio_prompt",
+          "type": "AUDIO",
+          "link": 26
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 25
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            89,
+            104
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "indextts-mw",
+        "ver": "a099a94ae57fe9d5ae54e4d5cdd073109aa0ccdf",
+        "Node name for S&R": "IndexTTSRun"
+      },
+      "widgets_values": [
+        "v1.5",
+        "zh",
+        30,
+        0.8,
+        1,
+        1000,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": 58,
+      "type": "Note",
+      "pos": [
+        1060,
+        1630
+      ],
+      "size": [
+        280,
+        120
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "可以使用任意tts模型或声音克隆样本\nCan use any TTS model or sound clone sample"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 26,
+      "type": "easy forLoopStart",
+      "pos": [
+        850,
+        580
+      ],
+      "size": [
+        270,
+        138
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "initial_value1",
+          "shape": 7,
+          "type": "*",
+          "link": null
+        },
+        {
+          "name": "total",
+          "type": "INT",
+          "widget": {
+            "name": "total"
+          },
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "flow",
+          "shape": 5,
+          "type": "FLOW_CONTROL",
+          "links": [
+            22
+          ]
+        },
+        {
+          "name": "index",
+          "type": "INT",
+          "links": [
+            23
+          ]
+        },
+        {
+          "name": "value1",
+          "type": "*",
+          "links": [
+            102
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "d287e28e5c3051d037cca4318305d0ed827420b4",
+        "Node name for S&R": "easy forLoopStart"
+      },
+      "widgets_values": [
+        1
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 21,
+      "type": "IndexSelectFromList",
+      "pos": [
+        900,
+        870
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "input_list",
+          "type": "LIST",
+          "link": 77
+        },
+        {
+          "name": "index",
+          "type": "INT",
+          "widget": {
+            "name": "index"
+          },
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "selected_item",
+          "type": "STRING",
+          "links": [
+            25
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "ver": "bcf42ad14660d2e2f6154a6c6dba3e7192add5c1",
+        "Node name for S&R": "IndexSelectFromList"
+      },
+      "widgets_values": [
+        1
+      ]
+    },
+    {
+      "id": 55,
+      "type": "MakeAudioBatch",
+      "pos": [
+        1340,
+        870
+      ],
+      "size": [
+        153.52011108398438,
+        46
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio1",
+          "type": "AUDIO",
+          "link": 102
+        },
+        {
+          "name": "audio2",
+          "type": "AUDIO",
+          "link": 89
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio_batch",
+          "type": "LIST",
+          "links": [
+            103
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
+        "Node name for S&R": "MakeAudioBatch"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 27,
+      "type": "easy forLoopEnd",
+      "pos": [
+        1420,
+        580
+      ],
+      "size": [
+        163.08984375,
+        106
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "flow",
+          "shape": 5,
+          "type": "FLOW_CONTROL",
+          "link": 22
+        },
+        {
+          "name": "initial_value1",
+          "shape": 7,
+          "type": "*",
+          "link": 103
+        },
+        {
+          "name": "initial_value2",
+          "type": "*",
+          "link": 104
+        },
+        {
+          "name": "initial_value3",
+          "type": "*",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "value1",
+          "type": "*",
+          "links": [
+            105
+          ]
+        },
+        {
+          "name": "value2",
+          "type": "*",
+          "links": [
+            106
+          ]
+        },
+        {
+          "name": "value3",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "d287e28e5c3051d037cca4318305d0ed827420b4",
+        "Node name for S&R": "easy forLoopEnd"
+      },
+      "widgets_values": [],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 36,
+      "type": "PreviewAudio",
+      "pos": [
+        1680,
+        600
+      ],
+      "size": [
+        270,
+        88
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 106
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.34",
+        "Node name for S&R": "PreviewAudio"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 54,
+      "type": "CombineAudioFromList",
+      "pos": [
+        1660,
+        860
+      ],
+      "size": [
+        297.5406188964844,
+        106
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio_batch",
+          "type": "LIST",
+          "link": 105
+        },
+        {
+          "name": "srt_file",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "srt_file"
+          },
+          "link": 100
+        }
+      ],
+      "outputs": [
+        {
+          "name": "combined_audio",
+          "type": "AUDIO",
+          "links": [
+            99
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
+        "Node name for S&R": "CombineAudioFromList"
+      },
+      "widgets_values": [
+        0,
+        true,
+        "D:\\Downloads\\s1.srt"
+      ]
+    },
+    {
+      "id": 56,
+      "type": "SaveAudio",
+      "pos": [
+        1910,
+        1370
+      ],
+      "size": [
+        270,
+        112
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 99
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.34",
+        "Node name for S&R": "SaveAudio"
+      },
+      "widgets_values": [
+        "audio/ComfyUI"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 51,
+      "type": "ShowText|pysssss",
+      "pos": [
+        580,
+        1390
+      ],
+      "size": [
+        310,
+        340
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 87
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": [
+            83
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "aac13aa7ce35b07d43633c3bbe654a38c00d74f5",
+        "Node name for S&R": "ShowText|pysssss"
+      },
+      "widgets_values": [
+        "从今天开始\n我们会开始\n关于stable diffusion Web UI的\n相关AI绘画课程的学习\nstable diffusion"
+      ]
+    },
+    {
+      "id": 48,
+      "type": "LongTextSplitter",
+      "pos": [
+        390,
+        870
+      ],
+      "size": [
+        400,
+        228
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 83
+        }
+      ],
+      "outputs": [
+        {
+          "name": "text_chunks",
+          "type": "LIST",
+          "links": [
+            77
+          ]
+        },
+        {
+          "name": "text_chunks_length",
+          "type": "INT",
+          "links": [
+            76
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
+        "Node name for S&R": "LongTextSplitter"
+      },
+      "widgets_values": [
+        "",
+        "sentence",
+        "。！？.!?",
+        200,
+        0,
+        ""
+      ]
+    },
+    {
+      "id": 52,
+      "type": "SubtitleFileLoader",
+      "pos": [
+        120,
+        1390
+      ],
+      "size": [
+        370,
+        78
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "links": [
+            87
+          ]
+        },
+        {
+          "name": "filepath",
+          "type": "STRING",
+          "links": [
+            100
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
+        "Node name for S&R": "SubtitleFileLoader"
+      },
+      "widgets_values": [
+        "\"D:\\Downloads\\s1.srt\""
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 59,
+      "type": "Note",
+      "pos": [
+        160,
+        1540
+      ],
+      "size": [
+        280,
+        120
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "输入文件地址\nEnter file address"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 57,
+      "type": "Note",
+      "pos": [
+        -380,
+        1270
+      ],
+      "size": [
+        318.6962585449219,
+        203.70697021484375
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Notice",
+      "properties": {
+        "text": ""
+      },
+      "widgets_values": [
+        "Product by CyberDickLang\n\nHave fun!\n\nWelcome to my channel\nwww.youtube.com/@CyberDickLang\n\nB站/小红书 赛博迪克朗\nhttps://space.bilibili.com/339984\n\nOr you can find me from\nhttps://civitai.com/user/CyberDickLang\nhttps://openart.ai/@whmc76"
+      ],
+      "color": "#006691",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      22,
+      26,
+      0,
+      27,
+      0,
+      "FLOW_CONTROL"
+    ],
+    [
+      23,
+      26,
+      1,
+      21,
+      1,
+      "INT"
+    ],
+    [
+      25,
+      21,
+      0,
+      28,
+      1,
+      "STRING"
+    ],
+    [
+      26,
+      29,
+      0,
+      28,
+      0,
+      "AUDIO"
+    ],
+    [
+      76,
+      48,
+      1,
+      26,
+      1,
+      "INT"
+    ],
+    [
+      77,
+      48,
+      0,
+      21,
+      0,
+      "LIST"
+    ],
+    [
+      83,
+      51,
+      0,
+      48,
+      0,
+      "STRING"
+    ],
+    [
+      87,
+      52,
+      0,
+      51,
+      0,
+      "STRING"
+    ],
+    [
+      89,
+      28,
+      0,
+      55,
+      1,
+      "AUDIO"
+    ],
+    [
+      99,
+      54,
+      0,
+      56,
+      0,
+      "AUDIO"
+    ],
+    [
+      100,
+      52,
+      1,
+      54,
+      1,
+      "STRING"
+    ],
+    [
+      102,
+      26,
+      2,
+      55,
+      0,
+      "AUDIO"
+    ],
+    [
+      103,
+      55,
+      0,
+      27,
+      1,
+      "*"
+    ],
+    [
+      104,
+      28,
+      0,
+      27,
+      2,
+      "*"
+    ],
+    [
+      105,
+      27,
+      0,
+      54,
+      0,
+      "LIST"
+    ],
+    [
+      106,
+      27,
+      1,
+      36,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "any TTS model",
+      "bounding": [
+        1030,
+        1280,
+        660,
+        480
+      ],
+      "color": "#8AA",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "Logic Loop",
+      "bounding": [
+        840,
+        510,
+        1120,
+        221.60000610351562
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 3,
+      "title": "split text",
+      "bounding": [
+        380,
+        790,
+        1587.5406494140625,
+        321.6000061035156
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.3855432894295325,
+      "offset": [
+        288.36047471495647,
+        -210.58120693145838
+      ]
+    },
+    "workspace_info": {
+      "id": "Xzn8bJk1H1GxNiiBJk6FY"
+    },
+    "frontendVersion": "1.19.9",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
