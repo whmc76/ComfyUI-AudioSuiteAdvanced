@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VSCode
+.vscode/
+
+# 环境/依赖
+.env
+.venv
+venv/
+ENV/
+env.bak/
+
+# 日志
+*.log
+
+# 音频输出
+output/
+*.wav
+*.mp3
+*.ogg
+*.flac
+*.m4a
+
+# 临时文件
+*.tmp
+*.bak
+~*
+.DS_Store
+Thumbs.db
+
+# 其他
+.cache/ 
