@@ -11,7 +11,7 @@ import torch
 import numpy as np
 from pydub import AudioSegment
 import re
-from .nodes import LongTextSplitterNode, AudioConcatenateFree, IndexSelectFromListNode, ListLengthNode
+from .nodes import LongTextSplitterNode, AudioConcatenateFree, IndexSelectFromListNode, ListLengthNode, SubtitleFileLoaderNode, MakeAudioBatchNode, CombineAudioFromList
 
 class TextSplitterNode:
     @classmethod
@@ -106,13 +106,19 @@ NODE_CLASS_MAPPINGS = {
     "AudioConcatenateFree": AudioConcatenateFree,
     "IndexSelectFromList": IndexSelectFromListNode,
     "ListLength": ListLengthNode,
+    "SubtitleFileLoader": SubtitleFileLoaderNode,
+    "MakeAudioBatch": MakeAudioBatchNode,
+    "CombineAudioFromList": CombineAudioFromList,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "LongTextSplitter": "长文本拆分",
-    "AudioConcatenateFree": "音频拼接free",
-    "IndexSelectFromList": "索引选择",
-    "ListLength": "列表长度",
+    "LongTextSplitter": "Long Text Splitter",
+    "AudioConcatenateFree": "Audio Concatenate Free",
+    "IndexSelectFromList": "Index Select From List",
+    "ListLength": "List Length",
+    "SubtitleFileLoader": "Subtitle File Loader",
+    "MakeAudioBatch": "Make Audio Batch",
+    "CombineAudioFromList": "Combine Audio From List/Batch",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS'] 
