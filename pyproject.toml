@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ComfyUI-LongTextTTSSuite"
+version = "1.0.0"
+description = "用于处理长文本文件并生成语音的ComfyUI插件"
+authors = [
+    {name = "CyberDickLang", email = "whmc76@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "torch",
+    "numpy",
+    "pydub"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/whmc76/ComfyUI-LongTextTTSSuite"
+"Bug Tracker" = "https://github.com/whmc76/ComfyUI-LongTextTTSSuite/issues" 
