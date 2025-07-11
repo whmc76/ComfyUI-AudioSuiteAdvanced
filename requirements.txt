@@ -1,1 +1,8 @@
-pydub 
+pydub
+librosa>=0.10.0
+torchaudio>=2.3.0
+numpy
+moviepy
+scipy
+soundfile
+git+https://github.com/m-bain/whisperX.git 

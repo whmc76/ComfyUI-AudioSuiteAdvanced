@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ComfyUI-LongTextTTSSuite"
-version = "1.0.0"
-description = "用于处理长文本文件并生成语音的ComfyUI插件"
+name = "ComfyUI-AudioSuiteAdvanced"
+version = "1.0.1"
+description = "用于处理长文本文件并生成语音的ComfyUI插件，支持音频分离、文本分割、音频拼接等功能"
 authors = [
     {name = "CyberDickLang", email = "whmc76@gmail.com"}
 ]
@@ -19,9 +19,15 @@ classifiers = [
 dependencies = [
     "torch",
     "numpy",
-    "pydub"
+    "pydub",
+    "librosa>=0.10.0",
+    "torchaudio>=2.3.0",
+    "moviepy",
+    "scipy",
+    "soundfile",
+    "git+https://github.com/m-bain/whisperX.git"
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/whmc76/ComfyUI-LongTextTTSSuite"
-"Bug Tracker" = "https://github.com/whmc76/ComfyUI-LongTextTTSSuite/issues" 
+"Homepage" = "https://github.com/whmc76/ComfyUI-AudioSuiteAdvanced"
+"Bug Tracker" = "https://github.com/whmc76/ComfyUI-AudioSuiteAdvanced/issues" 

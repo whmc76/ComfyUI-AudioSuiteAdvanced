@@ -184,7 +184,7 @@
     },
     {
       "id": 21,
-      "type": "IndexSelectFromList",
+      "type": "IndexSelectFromList_ASAdv",
       "pos": [
         900,
         870
@@ -221,9 +221,9 @@
         }
       ],
       "properties": {
-        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "aux_id": "whmc76/ComfyUI-AudioSuiteAdvanced",
         "ver": "bcf42ad14660d2e2f6154a6c6dba3e7192add5c1",
-        "Node name for S&R": "IndexSelectFromList"
+        "Node name for S&R": "IndexSelectFromList_ASAdv"
       },
       "widgets_values": [
         1
@@ -231,7 +231,7 @@
     },
     {
       "id": 55,
-      "type": "MakeAudioBatch",
+      "type": "MakeAudioBatch_ASAdv",
       "pos": [
         1340,
         870
@@ -265,9 +265,9 @@
         }
       ],
       "properties": {
-        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "aux_id": "whmc76/ComfyUI-AudioSuiteAdvanced",
         "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
-        "Node name for S&R": "MakeAudioBatch"
+        "Node name for S&R": "MakeAudioBatch_ASAdv"
       },
       "widgets_values": []
     },
@@ -370,7 +370,7 @@
     },
     {
       "id": 54,
-      "type": "CombineAudioFromList",
+      "type": "CombineAudioFromList_ASAdv",
       "pos": [
         1660,
         860
@@ -408,9 +408,9 @@
         }
       ],
       "properties": {
-        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "aux_id": "whmc76/ComfyUI-AudioSuiteAdvanced",
         "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
-        "Node name for S&R": "CombineAudioFromList"
+        "Node name for S&R": "CombineAudioFromList_ASAdv"
       },
       "widgets_values": [
         0,
@@ -493,7 +493,7 @@
     },
     {
       "id": 48,
-      "type": "LongTextSplitter",
+      "type": "LongTextSplitter_ASAdv",
       "pos": [
         390,
         870
@@ -532,9 +532,9 @@
         }
       ],
       "properties": {
-        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "aux_id": "whmc76/ComfyUI-AudioSuiteAdvanced",
         "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
-        "Node name for S&R": "LongTextSplitter"
+        "Node name for S&R": "LongTextSplitter_ASAdv"
       },
       "widgets_values": [
         "",
@@ -547,7 +547,7 @@
     },
     {
       "id": 52,
-      "type": "SubtitleFileLoader",
+      "type": "SubtitleFileLoader_ASAdv",
       "pos": [
         120,
         1390
@@ -577,9 +577,9 @@
         }
       ],
       "properties": {
-        "aux_id": "whmc76/ComfyUI-LongTextTTSSuite",
+        "aux_id": "whmc76/ComfyUI-AudioSuiteAdvanced",
         "ver": "9c7ec7be15892338650bcd3459fd4f248f6c4c8c",
-        "Node name for S&R": "SubtitleFileLoader"
+        "Node name for S&R": "SubtitleFileLoader_ASAdv"
       },
       "widgets_values": [
         "\"D:\\Downloads\\s1.srt\""
