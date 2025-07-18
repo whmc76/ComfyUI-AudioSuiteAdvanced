@@ -4,7 +4,12 @@ Text Processing Nodes Module
 """
 
 import re
+import os
+import torch
+import tempfile
+import json
 from typing import List, Dict, Any, Union, Tuple
+from pathlib import Path
 
 class LongTextSplitterNode:
     """
@@ -328,3 +333,239 @@ class ListLengthNode:
             列表长度
         """
         return (len(input_list),) 
+
+import numpy as np
+import torchaudio
+from faster_whisper import WhisperModel
+import soundfile as sf
+import tempfile
+import whisperx
+
+class MultiSpeakerSpeechToText:
+    CATEGORY = "AudioSuiteAdvanced"
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO", {
+                    "description": "输入音频文件 (支持多人说话识别)"
+                }),
+                "language": ([
+                    "auto", "zh", "en", "ja", "fr", "de", "ru", "es", "it", "ko"
+                ], {
+                    "default": "auto",
+                    "description": "识别语言代码，auto为自动检测"
+                }),
+                "whisper_model": ([
+                    "tiny", "base", "small", "medium", "large-v2"
+                ], {
+                    "default": "medium",
+                    "description": "faster-whisper模型类型"
+                }),
+                "use_whisperx": ("BOOLEAN", {
+                    "default": True,
+                    "description": "使用 WhisperX 进行说话人分离（推荐）"
+                }),
+                "auth_token": ("STRING", {
+                    "default": "",
+                    "description": "HuggingFace auth token (仅在使用 pyannote 时需要)"
+                }),
+            }
+        }
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("subtitle_json",)
+    FUNCTION = "execute"
+    DESCRIPTION = "多人语音转文字，输出标准 JSON，供角色分离节点使用。"
+
+    @classmethod
+    def IS_CHANGED(cls, *args, **kwargs):
+        return args, kwargs
+
+    def execute(self, audio: Dict[str, Any], language: str, whisper_model: str, use_whisperx: bool, auth_token: str):
+        import shutil
+        # 1. 保存音频为临时 wav 文件
+        waveform = audio["waveform"]
+        sample_rate = int(audio["sample_rate"])
+        if waveform.dim() == 3:
+            waveform = waveform[0]  # [B, C, N] -> [C, N]
+        if waveform.dim() == 2 and waveform.shape[0] > 1:
+            waveform = waveform.mean(dim=0, keepdim=True)  # 多通道转单通道
+        if waveform.dim() == 2:
+            waveform = waveform.squeeze(0)  # [1, N] -> [N]
+        waveform_np = waveform.cpu().numpy()
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_wav:
+            sf.write(tmp_wav.name, waveform_np, sample_rate)
+            wav_path = tmp_wav.name
+
+        try:
+            if use_whisperx:
+                # 使用 WhisperX 进行说话人分离和转写
+                results = self._process_with_whisperx(wav_path, language, whisper_model)
+            else:
+                # 使用 pyannote + faster-whisper
+                results = self._process_with_pyannote(wav_path, language, whisper_model, auth_token)
+        except Exception as e:
+            print(f"[ERROR] 处理失败: {e}")
+            results = []
+        finally:
+            os.remove(wav_path)
+        
+        # 输出标准 JSON
+        return (json.dumps(results, ensure_ascii=False, indent=2),)
+    
+    def _process_with_whisperx(self, wav_path: str, language: str, whisper_model: str) -> List[Dict]:
+        """使用 WhisperX 进行说话人分离和转写"""
+        print("[INFO] 使用 WhisperX 进行说话人分离和转写")
+        
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        compute_type = "float16"
+        
+        # 1. 加载 WhisperX 模型
+        if whisper_model == "large-v2":
+            model_type = "large-v2"
+        elif whisper_model == "medium":
+            model_type = "medium"
+        elif whisper_model == "small":
+            model_type = "small"
+        elif whisper_model == "base":
+            model_type = "base"
+        elif whisper_model == "tiny":
+            model_type = "tiny"
+        else:
+            model_type = "medium"
+        
+        model = whisperx.load_model(model_type, device, compute_type=compute_type)
+        audio = whisperx.load_audio(wav_path)
+        
+        # 2. 转写
+        result = model.transcribe(audio, batch_size=4)
+        language_code = result["language"]
+        
+        # 3. 时间对齐
+        model_a, metadata = whisperx.load_align_model(language_code=language_code, device=device)
+        result = whisperx.align(result["segments"], model_a, metadata, audio, device, return_char_alignments=False)
+        
+        # 清理模型内存
+        import gc
+        gc.collect()
+        torch.cuda.empty_cache()
+        del model_a, model
+        
+        # 4. 说话人分离
+        diarize_model = whisperx.DiarizationPipeline(use_auth_token=None, device=device)
+        diarize_segments = diarize_model(audio)
+        result = whisperx.assign_word_speakers(diarize_segments, result)
+        
+        # 清理内存
+        gc.collect()
+        torch.cuda.empty_cache()
+        del diarize_model
+        
+        # 5. 格式化输出
+        results = []
+        for i, segment in enumerate(result["segments"]):
+            try:
+                speaker_name = segment.get("speaker", f"SPEAKER_{i:02d}")
+            except:
+                speaker_name = f"SPEAKER_{i:02d}"
+            
+            # 时间格式化
+            def sec2str(sec):
+                m, s = divmod(int(sec), 60)
+                return f"{m}:{s:02d}"
+            
+            results.append({
+                "id": speaker_name,
+                "start": sec2str(segment["start"]),
+                "end": sec2str(segment["end"]),
+                "text": segment["text"].strip()
+            })
+        
+        return results
+    
+    def _process_with_pyannote(self, wav_path: str, language: str, whisper_model: str, auth_token: str) -> List[Dict]:
+        """使用 pyannote + faster-whisper 进行说话人分离和转写"""
+        print("[INFO] 使用 pyannote + faster-whisper 进行说话人分离和转写")
+        
+        from pyannote.audio import Pipeline
+        diarization_model = "pyannote/speaker-diarization@2.1"
+        
+        # 2. 说话人分离（使用绝对路径避免反斜杠问题）
+        comfy_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..'))
+        local_model_dir = os.path.join(comfy_root, 'models', 'speaker-diarization')
+        print(f"[DEBUG] pyannote local_model_dir (absolute): {local_model_dir}")
+        
+        # 检查本地模型是否存在
+        config_file = os.path.join(local_model_dir, "config.yaml")
+        pipeline = None
+        
+        if os.path.exists(config_file):
+            print(f"[DEBUG] 使用本地 pyannote 模型: {local_model_dir}")
+            try:
+                pipeline = Pipeline.from_pretrained(local_model_dir)
+            except Exception as e:
+                print(f"[WARN] 本地模型加载失败: {e}")
+                pipeline = None
+        
+        if pipeline is None:
+            print(f"[DEBUG] 从远程下载 pyannote 模型到: {local_model_dir}")
+            try:
+                # 使用用户提供的 auth_token 或 None
+                use_token = auth_token if auth_token.strip() else None
+                pipeline = Pipeline.from_pretrained(diarization_model, cache_dir=local_model_dir, use_auth_token=use_token)
+            except Exception as e:
+                print(f"[ERROR] 远程下载失败: {e}")
+                if not auth_token.strip():
+                    print("[INFO] 请访问 https://hf.co/pyannote/speaker-diarization 接受使用条款")
+                    print("[INFO] 然后在 auth_token 参数中输入你的 HuggingFace token")
+                else:
+                    print("[INFO] 请检查你的 auth_token 是否正确")
+                return []
+        
+        if pipeline is None:
+            print("[ERROR] pipeline 加载失败")
+            return []
+        
+        diarization = pipeline(wav_path)
+        # diarization.itertracks(yield_label=True) -> (segment, track, label)
+        segments = []
+        for segment, _, speaker in diarization.itertracks(yield_label=True):
+            segments.append({
+                "start": segment.start,
+                "end": segment.end,
+                "speaker": speaker
+            })
+
+        # 3. 用 faster-whisper 对每个说话人片段做转写
+        model = WhisperModel(whisper_model, device="cuda" if torch.cuda.is_available() else "cpu", compute_type="float16")
+        # 语言auto时传None
+        lang_arg = None if language == "auto" else language
+        results = []
+        
+        # 重新加载音频用于裁剪
+        waveform_np, sample_rate = sf.read(wav_path)
+        
+        for seg in segments:
+            # 裁剪音频片段
+            start_sample = int(seg["start"] * sample_rate)
+            end_sample = int(seg["end"] * sample_rate)
+            seg_audio = waveform_np[start_sample:end_sample]
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as seg_wav:
+                sf.write(seg_wav.name, seg_audio, sample_rate)
+                seg_wav_path = seg_wav.name
+            # 识别
+            segments_gen, _ = model.transcribe(seg_wav_path, language=lang_arg, beam_size=5, word_timestamps=True)
+            text = "".join([s.text for s in segments_gen])
+            # 时间格式化
+            def sec2str(sec):
+                m, s = divmod(int(sec), 60)
+                return f"{m}:{s:02d}"
+            results.append({
+                "id": seg["speaker"],
+                "start": sec2str(seg["start"]),
+                "end": sec2str(seg["end"]),
+                "text": text.strip()
+            })
+            os.remove(seg_wav_path)
+        
+        return results 

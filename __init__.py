@@ -15,7 +15,8 @@ from .nodes import (
     MakeAudioBatchNode,
     CombineAudioFromList,
     CharacterVocalExtractor_ASAdv,
-    CharacterVocalExtractorMultiTrack
+    CharacterVocalExtractorMultiTrack,
+    MultiSpeakerSpeechToText
 )
 
 # 注册所有节点
@@ -30,6 +31,7 @@ NODE_CLASS_MAPPINGS = {
     "AudioSeparation": AudioSeparationNode,
     "CharacterVocalExtractor": CharacterVocalExtractor_ASAdv,
     "CharacterVocalExtractorMultiTrack": CharacterVocalExtractorMultiTrack,
+    "MultiSpeakerSpeechToText": MultiSpeakerSpeechToText,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -43,6 +45,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AudioSeparation": "Audio Separation (ASA)",
     "CharacterVocalExtractor": "Character Vocal Extractor (ASA)",
     "CharacterVocalExtractorMultiTrack": "Character Vocal Extractor (Multi-Track) (ASA)",
+    "MultiSpeakerSpeechToText": "Multi-Speaker Speech To Text (ASA)",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS'] 
