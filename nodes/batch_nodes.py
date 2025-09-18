@@ -25,7 +25,7 @@ class MakeAudioBatchNode:
     RETURN_TYPES = ("LIST",)
     RETURN_NAMES = ("audio_batch",)
     FUNCTION = "make_batch"
-    CATEGORY = "ComfyUI-AudioSuiteAdvanced"
+    CATEGORY = "AudioSuiteAdvanced"
 
     def make_batch(self, audio1, audio2):
         """
@@ -69,7 +69,7 @@ class CombineAudioFromList:
     RETURN_TYPES = ("AUDIO",)
     RETURN_NAMES = ("combined_audio",)
     FUNCTION = "combine_audio"
-    CATEGORY = "ComfyUI-AudioSuiteAdvanced"
+    CATEGORY = "AudioSuiteAdvanced"
 
     def combine_audio(self, audio_batch, gap_duration, use_timestamps, srt_file=None):
         """

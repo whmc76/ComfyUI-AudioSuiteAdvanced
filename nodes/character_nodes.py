@@ -25,6 +25,8 @@ class CharacterVocalExtractor_ASAdv:
                     "default": "",
                     "description": "字幕JSON数据\nSubtitle JSON data"
                 }),
+                "offset_seconds": ("FLOAT", {"default": 0, "min": 0, "max": 99999999999999999.0}),
+                "duration_seconds": ("FLOAT", {"default": 0, "min": 0, "max": 99999999999999999.0}),
                 "fill_silence": ("BOOLEAN", {
                     "default": True,
                     "description": "无片段时是否输出静音\nFill silence if no segment for character"
@@ -46,15 +48,38 @@ class CharacterVocalExtractor_ASAdv:
     CATEGORY = "AudioSuiteAdvanced"
     DESCRIPTION = "对原声音进行剪裁，将非目标角色的片段静音，仅保留目标角色语音。输出端口固定为 narrator_audio、character1_audio、character2_audio、character3_audio、character4_audio、character5_audio。每个端口输出对应角色音频，无片段则输出静音。"
 
-    def extract_fixed_characters(self, audio: Dict[str, Any], subtitle_json: str, fill_silence: bool = True):
+    def extract_fixed_characters(self, audio: Dict[str, Any], subtitle_json: str, offset_seconds: float, duration_seconds: float, fill_silence: bool = True):
         import json
         import numpy as np
         import torch
         from typing import List, Dict, Any
 
         print(f"[CharacterVocalExtractor_ASAdv] 开始执行角色语音剪裁...")
+        print(f"[CharacterVocalExtractor_ASAdv] 输入参数: offset_seconds={offset_seconds}, duration_seconds={duration_seconds}")
         print(f"[CharacterVocalExtractor_ASAdv] 输入音频类型: {type(audio)}")
         print(f"[CharacterVocalExtractor_ASAdv] 输入音频键: {list(audio.keys()) if isinstance(audio, dict) else 'N/A'}")
+
+        # 获取原始音频并应用裁剪逻辑（遵循UTK的duration处理方式）
+        waveform = audio["waveform"]  # [B, C, N]
+        sample_rate = int(audio["sample_rate"])
+        
+        if duration_seconds > 0:
+            # 只有当duration大于0时才进行裁剪
+            start = int(offset_seconds * sample_rate)
+            end = int(start + duration_seconds * sample_rate)
+            waveform = waveform[:, :, start:end]
+            print(f"[CharacterVocalExtractor_ASAdv] 应用时间段裁剪: {offset_seconds}s - {offset_seconds + duration_seconds}s")
+        elif offset_seconds > 0:
+            # 如果duration为0但offset大于0，只应用offset裁剪
+            start = int(offset_seconds * sample_rate)
+            waveform = waveform[:, :, start:]
+            print(f"[CharacterVocalExtractor_ASAdv] 应用offset裁剪: 从{offset_seconds}s开始到结尾")
+        # 如果duration和offset都为0，则不进行任何裁剪
+        else:
+            print(f"[CharacterVocalExtractor_ASAdv] 未应用任何裁剪，使用完整音频")
+        
+        # 更新audio字典
+        audio = {"waveform": waveform, "sample_rate": sample_rate}
 
         # 固定角色名列表
         role_keys = [
@@ -257,6 +282,8 @@ class CharacterVocalExtractorMultiTrack:
                     "description": "字幕JSON数据，包含角色和时间信息\nSubtitle JSON data with character and timing info"
                 }),
                 "gain_db": ("FLOAT", {"default": 0, "min": -100, "max": 100}),
+                "offset_seconds": ("FLOAT", {"default": 0, "min": 0, "max": 99999999999999999.0}),
+                "duration_seconds": ("FLOAT", {"default": 0, "min": 0, "max": 99999999999999999.0}),
                 "resample_to_hz": ("FLOAT", {"default": 0, "min": 0, "max": 99999999999999999.0}),
                 "make_stereo": ("BOOLEAN", {"default": True}),
                 "fill_silence": ("BOOLEAN", {"default": True}),
@@ -285,6 +312,8 @@ class CharacterVocalExtractorMultiTrack:
         audio,
         subtitle_json: str,
         gain_db: float,
+        offset_seconds: float,
+        duration_seconds: float,
         resample_to_hz: float,
         make_stereo: bool,
         fill_silence: bool,
@@ -295,7 +324,30 @@ class CharacterVocalExtractorMultiTrack:
         from typing import List, Dict, Any
 
         print(f"[CharacterVocalExtractorMultiTrack] 开始执行多轨角色音频切分...")
-        print(f"[CharacterVocalExtractorMultiTrack] 输入参数: gain_db={gain_db}, resample_to_hz={resample_to_hz}, make_stereo={make_stereo}")
+        print(f"[CharacterVocalExtractorMultiTrack] 输入参数: gain_db={gain_db}, offset_seconds={offset_seconds}, duration_seconds={duration_seconds}, resample_to_hz={resample_to_hz}, make_stereo={make_stereo}")
+
+        # 获取原始音频
+        waveform = audio["waveform"]  # [B, C, N]
+        sample_rate = int(audio["sample_rate"])
+        
+        # 应用音频裁剪逻辑（遵循UTK的duration处理方式）
+        if duration_seconds > 0:
+            # 只有当duration大于0时才进行裁剪
+            start = int(offset_seconds * sample_rate)
+            end = int(start + duration_seconds * sample_rate)
+            waveform = waveform[:, :, start:end]
+            print(f"[CharacterVocalExtractorMultiTrack] 应用时间段裁剪: {offset_seconds}s - {offset_seconds + duration_seconds}s")
+        elif offset_seconds > 0:
+            # 如果duration为0但offset大于0，只应用offset裁剪
+            start = int(offset_seconds * sample_rate)
+            waveform = waveform[:, :, start:]
+            print(f"[CharacterVocalExtractorMultiTrack] 应用offset裁剪: 从{offset_seconds}s开始到结尾")
+        # 如果duration和offset都为0，则不进行任何裁剪
+        else:
+            print(f"[CharacterVocalExtractorMultiTrack] 未应用任何裁剪，使用完整音频")
+        
+        # 更新audio字典
+        audio = {"waveform": waveform, "sample_rate": sample_rate}
 
         # 固定角色名列表
         role_keys = [

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ComfyUI-AudioSuiteAdvanced"
-version = "1.0.1"
+version = "1.0.2"
 description = "用于处理长文本文件并生成语音的ComfyUI插件，支持音频分离、文本分割、音频拼接等功能"
 authors = [
     {name = "CyberDickLang", email = "whmc76@gmail.com"}

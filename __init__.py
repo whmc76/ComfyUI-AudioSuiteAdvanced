@@ -1,7 +1,7 @@
 """
-ComfyUI-AudioSuiteAdvanced
+ComfyUI-AudioSuiteAdvanced v1.0.2
 Author: CyberDickLang
-Description: 用于处理长文本文件并生成语音的ComfyUI插件
+Description: 用于处理长文本文件并生成语音的ComfyUI插件，支持音频分离、文本分割、音频拼接等功能
 """
 
 # 从nodes文件夹导入所有节点

@@ -2,7 +2,7 @@
 
 作者：CyberDickLang
 
-版本号：1.0.1
+版本号：1.0.2
 
 本插件为 ComfyUI 提供长文本处理与音频合成相关的多功能节点，支持文本分割、音频拼接、音频合并、字幕时间戳对齐、音频分离、说话人分离等多种场景。
 
@@ -116,6 +116,20 @@
 - 2024-12-19：新增Audio Separation节点，支持音频分离为四个音轨。
 - 2024-12-20：新增Speaker Separation节点，支持多说话人音频分离，支持本地模型优先。
 - 2025-01-10：升级Speaker Separation节点，使用WhisperX替代pyannote.audio，提升兼容性和易用性。
+
+---
+
+## 版本更新日志
+
+### v1.0.2 (2024-12-19)
+- 🔧 **修复**：解决了ComfyUI中出现两个AudioSuiteAdvanced分类目录的问题
+- ✨ **新增**：为Character Vocal Extractor节点添加了`offset_seconds`和`duration_seconds`参数
+- 🎯 **优化**：实现当`duration_seconds`为0时不截取音频的逻辑，完全兼容UTK的Audio Crop Process标准
+- 📦 **重构**：统一了所有节点的分类名为`AudioSuiteAdvanced`
+
+### v1.0.1
+- 初始版本发布
+- 支持长文本分割、音频拼接、音频分离等基础功能
 
 ---
 
