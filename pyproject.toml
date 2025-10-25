@@ -4,11 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ComfyUI-AudioSuiteAdvanced"
-version = "1.0.2"
 description = "用于处理长文本文件并生成语音的ComfyUI插件，支持音频分离、文本分割、音频拼接等功能"
-authors = [
-    {name = "CyberDickLang", email = "whmc76@gmail.com"}
-]
+version = "1.0.3"
+license = { file = "LICENSE.txt" }
+dependencies = [] # Filled in from requirements.txt
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -16,18 +15,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "torch",
-    "numpy",
-    "pydub",
-    "librosa>=0.10.0",
-    "torchaudio>=2.3.0",
-    "moviepy",
-    "scipy",
-    "soundfile",
-    "git+https://github.com/m-bain/whisperX.git"
-]
 
 [project.urls]
-"Homepage" = "https://github.com/whmc76/ComfyUI-AudioSuiteAdvanced"
-"Bug Tracker" = "https://github.com/whmc76/ComfyUI-AudioSuiteAdvanced/issues" 
+Repository = "https://github.com/whmc76/ComfyUI-AudioSuiteAdvanced"
+
+[tool.comfy]
+PublisherId = "whmc76"
+DisplayName = "AudioSuiteAdvanced"
+Icon = "https://raw.githubusercontent.com/whmc76/ComfyUI-AudioSuiteAdvanced/main/icon.png" 
