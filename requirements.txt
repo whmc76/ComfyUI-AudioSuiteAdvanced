@@ -4,5 +4,4 @@ torchaudio
 numpy
 moviepy
 scipy
-soundfile
-git+https://github.com/m-bain/whisperX.git 
+soundfile 

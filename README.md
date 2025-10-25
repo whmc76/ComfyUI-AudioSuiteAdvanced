@@ -61,14 +61,14 @@
 - **功能**：输出列表长度。
 
 ### 9. Speaker Separation_ASAdv
-- **功能**：使用 WhisperX 将多说话人音频分离为最多4个人物的独立音轨（如双人对话分别输出两个人的音频）。
+- **功能**：将多说话人音频分离为最多4个人物的独立音轨（如双人对话分别输出两个人的音频）。
 - **参数**：
   - `audio`：输入音频（建议16kHz单声道）
   - `max_speakers`：最大说话人数（1~4）
   - `language`：音频语言代码，如'zh'、'en'、'ja'等，'auto'为自动检测
   - `compute_type`：计算精度，float16更快但精度稍低
 - **输出**：audio1、audio2、audio3、audio4（不足人数补静音）
-- **优势**：基于 WhisperX，兼容性更好，无需额外模型下载，支持多语言。
+- **注意**：WhisperX功能暂时禁用，当前使用pyannote.audio进行说话人分离。
 
 ---
 
@@ -85,18 +85,22 @@
 
 ---
 
-## WhisperX 说话人分离说明
+## 说话人分离说明
+
+### 当前状态
+- **WhisperX功能暂时禁用**：由于依赖问题，暂时移除WhisperX功能
+- **使用pyannote.audio**：当前使用pyannote.audio进行说话人分离
+- **需要配置**：需要HuggingFace auth token用于pyannote.audio
 
 ### 功能特点
-- **无需额外配置**：WhisperX 会自动下载所需的模型文件
 - **多语言支持**：支持中文、英文、日文等多种语言
 - **自动检测**：可自动检测音频语言，也可手动指定
-- **高兼容性**：支持 Python 3.8+，无需降级 Python 版本
+- **高兼容性**：支持 Python 3.7+，无需降级 Python 版本
 
 ### 使用建议
 - 建议使用 16kHz 单声道音频以获得最佳效果
 - 对于较长的音频，处理时间可能较长，请耐心等待
-- 可通过 `compute_type` 参数调整计算精度和速度的平衡
+- 需要配置HuggingFace auth token
 
 ---
 
