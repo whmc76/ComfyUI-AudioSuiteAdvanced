@@ -1,6 +1,6 @@
 pydub
-librosa>=0.10.0
-torchaudio>=2.3.0
+librosa
+torchaudio
 numpy
 moviepy
 scipy
