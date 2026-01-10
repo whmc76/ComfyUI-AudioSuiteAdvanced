@@ -378,8 +378,19 @@ class MultiSpeakerSpeechToText:
     DESCRIPTION = "多人语音转文字，输出标准 JSON，供角色分离节点使用。"
 
     @classmethod
-    def IS_CHANGED(cls, *args, **kwargs):
-        return args, kwargs
+    def IS_CHANGED(cls, audio, language, whisper_model, use_whisperx, auth_token):
+        import hashlib
+        # 基于音频数据和参数生成哈希值
+        audio_hash = ""
+        if audio and isinstance(audio, dict):
+            waveform = audio.get("waveform")
+            sample_rate = audio.get("sample_rate")
+            if waveform is not None:
+                # 使用音频的形状和采样率生成哈希
+                audio_hash = f"{waveform.shape}_{sample_rate}"
+        # 组合所有参数生成唯一标识符
+        params_str = f"{audio_hash}_{language}_{whisper_model}_{use_whisperx}_{auth_token}"
+        return hashlib.sha256(params_str.encode()).hexdigest()
 
     def execute(self, audio: Dict[str, Any], language: str, whisper_model: str, use_whisperx: bool, auth_token: str):
         import shutil

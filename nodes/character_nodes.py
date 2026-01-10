@@ -304,8 +304,19 @@ class CharacterVocalExtractorMultiTrack:
     DESCRIPTION = "基于 UTK Audio Crop Process 的多轨角色音频切分。使用 UTK 的音频处理逻辑，支持增益调整、重采样、立体声转换等功能。"
 
     @classmethod
-    def IS_CHANGED(cls, *args):
-        return args
+    def IS_CHANGED(cls, audio, subtitle_json, gain_db, offset_seconds, duration_seconds, resample_to_hz, make_stereo, fill_silence):
+        import hashlib
+        # 基于音频数据和参数生成哈希值
+        audio_hash = ""
+        if audio and isinstance(audio, dict):
+            waveform = audio.get("waveform")
+            sample_rate = audio.get("sample_rate")
+            if waveform is not None:
+                # 使用音频的形状和采样率生成哈希
+                audio_hash = f"{waveform.shape}_{sample_rate}"
+        # 组合所有参数生成唯一标识符
+        params_str = f"{audio_hash}_{subtitle_json}_{gain_db}_{offset_seconds}_{duration_seconds}_{resample_to_hz}_{make_stereo}_{fill_silence}"
+        return hashlib.sha256(params_str.encode()).hexdigest()
 
     def execute(
         self,
@@ -455,7 +466,18 @@ class CharacterVocalExtractorMultiTrack:
                 print(f"[CharacterVocalExtractorMultiTrack] 角色 '{role}' 总时长: {total_duration:.2f}秒, 总样本数: {total_samples}")
                 
                 # 创建与原音频等长的张量，初始化为静音 - 与 UTK 格式一致
-                full_audio = torch.zeros_like(waveform)
+                # 如果 make_stereo=True，需要确保 full_audio 是立体声（2个声道）
+                if make_stereo and waveform.shape[1] == 1:
+                    # 如果原始音频是单声道但需要立体声输出，创建2声道的 full_audio
+                    full_audio = torch.zeros(
+                        waveform.shape[0], 
+                        2,  # 立体声
+                        waveform.shape[2],
+                        dtype=waveform.dtype,
+                        device=waveform.device
+                    )
+                else:
+                    full_audio = torch.zeros_like(waveform)
                 print(f"[CharacterVocalExtractorMultiTrack] 创建切分音频张量: 形状={full_audio.shape}")
                 
                 for j, (s, e) in enumerate(segments):
@@ -488,11 +510,12 @@ class CharacterVocalExtractorMultiTrack:
                             target_start = max(0, min(target_start, full_audio.shape[2]))
                             target_end = max(target_start, min(target_end, full_audio.shape[2]))
                             
-                            # 调整 full_audio 大小以匹配新的采样率
-                            if full_audio.shape[2] != processed_waveform.shape[2]:
+                            # 调整 full_audio 大小以匹配新的采样率和声道数
+                            if (full_audio.shape[1] != processed_waveform.shape[1] or 
+                                full_audio.shape[2] != processed_waveform.shape[2]):
                                 full_audio = torch.zeros(
                                     processed_waveform.shape[0], 
-                                    processed_waveform.shape[1], 
+                                    processed_waveform.shape[1],  # 确保声道数匹配
                                     max(full_audio.shape[2], target_end),
                                     dtype=processed_waveform.dtype,
                                     device=processed_waveform.device
@@ -505,6 +528,23 @@ class CharacterVocalExtractorMultiTrack:
                         target_start = max(0, min(target_start, full_audio.shape[2]))
                         target_end = max(target_start, min(target_end, full_audio.shape[2]))
                         seg_len = min(target_end - target_start, processed_waveform.shape[2])
+                        
+                        # 确保 full_audio 的声道数与 processed_waveform 匹配
+                        if full_audio.shape[1] != processed_waveform.shape[1]:
+                            # 如果声道数不匹配，重新创建 full_audio
+                            new_full_audio = torch.zeros(
+                                processed_waveform.shape[0],
+                                processed_waveform.shape[1],
+                                full_audio.shape[2],
+                                dtype=processed_waveform.dtype,
+                                device=processed_waveform.device
+                            )
+                            # 复制已有的数据
+                            if full_audio.shape[2] > 0:
+                                min_channels = min(full_audio.shape[1], new_full_audio.shape[1])
+                                new_full_audio[:, :min_channels, :full_audio.shape[2]] = full_audio[:, :min_channels, :]
+                            full_audio = new_full_audio
+                            print(f"[CharacterVocalExtractorMultiTrack] 调整 full_audio 声道数: {full_audio.shape[1]} 声道")
                         
                         if seg_len > 0:
                             full_audio[:, :, target_start:target_start+seg_len] = processed_waveform[:, :, :seg_len]
