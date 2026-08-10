@@ -1,5 +1,5 @@
 """
-ComfyUI-AudioSuiteAdvanced v1.0.6
+ComfyUI-AudioSuiteAdvanced v1.0.7
 Author: CyberDickLang
 Description: 用于处理长文本文件并生成语音的ComfyUI插件，支持音频分离、文本分割、音频拼接等功能
 """
@@ -48,4 +48,4 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "MultiSpeakerSpeechToText": "Multi-Speaker Speech To Text (ASA)",
 }
 
-__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS'] 
+__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
