@@ -1,0 +1,10 @@
+# Development-only validation files are not needed at runtime.
+test_*.py
+ref_codes/
+.github/
+.editorconfig
+.gitignore
+
+# Local Python artifacts.
+__pycache__/
+*.py[cod]
